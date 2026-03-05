@@ -1,0 +1,198 @@
+:root {
+    --bg-color-glass: rgba(30, 30, 30, 0.85);
+    /* ダークテーマ、半透明 */
+    --text-primary: #ffffff;
+    --text-secondary: #aaa;
+    --accent-color: #0078D7;
+    /* Windowsのデフォルトアクセント風ブルー */
+    --border-radius-main: 12px;
+    --border-radius-item: 8px;
+    --item-bg-hover: rgba(255, 255, 255, 0.1);
+    --item-bg-selected: rgba(0, 120, 215, 0.4);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ウィンドウ全体のスタイル (背景透明かつ角丸) */
+body,
+html {
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    /* メインウィンドウの背景は透明に */
+    overflow: hidden;
+    /* スクロールバー非表示 */
+    /* テキスト選択などを無効化してアプリと見せる */
+    user-select: none;
+}
+
+.app-container {
+    width: 100%;
+    height: 100%;
+    background-color: var(--bg-color-glass);
+    backdrop-filter: blur(20px);
+    /* すりガラス効果 */
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: var(--border-radius-main) var(--border-radius-main) 0 0;
+    box-shadow: 0 -5px 30px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* ヘッダー領域 */
+.header {
+    height: 50px;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    /* Electron特有：ここをドラッグしてウィンドウを動かせるようにするかは要検討。
+     今回は枠なしでポップアップ風なのでドラッグ不要かも */
+}
+
+.tabs {
+    display: flex;
+    gap: 20px;
+}
+
+.tab {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 10px 0;
+    position: relative;
+    transition: color 0.2s;
+}
+
+.tab:hover {
+    color: var(--text-primary);
+}
+
+.tab.active {
+    color: var(--text-primary);
+}
+
+.tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: var(--accent-color);
+    border-radius: 2px 2px 0 0;
+}
+
+/* コンテンツ表示領域（横スクロール） */
+.content-area {
+    flex: 1;
+    padding: 20px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    /* スクロールバーのカスタマイズ */
+}
+
+.content-area::-webkit-scrollbar {
+    height: 8px;
+}
+
+.content-area::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+}
+
+.content-area::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+}
+
+.content-area::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.item-list {
+    display: flex;
+    gap: 15px;
+    list-style: none;
+    height: 100%;
+    width: max-content;
+    /* 中身の幅に合わせることで確実にはみ出させる */
+}
+
+/* 個別のカードアイテム */
+.item {
+    width: 200px;
+    /* 固定幅 */
+    height: 100%;
+    flex-shrink: 0;
+    /* 縮小させずスクロールバーを発生させる */
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: var(--border-radius-item);
+    padding: 15px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    transition: background-color 0.2s, transform 0.1s;
+    border: 1px solid transparent;
+}
+
+.item:hover {
+    background-color: var(--item-bg-hover);
+}
+
+.item.selected {
+    background-color: var(--item-bg-selected);
+    border-color: var(--accent-color);
+    transform: translateY(-2px);
+    /* 少し浮き上がる */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.item-content {
+    flex: 1;
+    color: var(--text-primary);
+    font-size: 14px;
+    line-height: 1.4;
+    /* はみ出したテキストは「...」に */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 8;
+    /* 最大行数 */
+    line-clamp: 8;
+    /* 標準プロパティ追加 */
+    -webkit-box-orient: vertical;
+    word-break: break-all;
+}
+
+.item-meta {
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    display: flex;
+    justify-content: space-between;
+}
+
+/* フッター領域 */
+.footer {
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.hint {
+    font-size: 12px;
+    color: var(--text-secondary);
+}

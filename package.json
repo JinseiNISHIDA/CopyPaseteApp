@@ -1,0 +1,65 @@
+{
+  "name": "copypaste",
+  "version": "1.0.0",
+  "description": "Windows用クリップボード履歴マネージャー",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron .",
+    "build": "electron-builder --win",
+    "build:dir": "electron-builder --win --dir"
+  },
+  "keywords": [
+    "clipboard",
+    "paste",
+    "history"
+  ],
+  "author": "Nishida",
+  "license": "ISC",
+  "type": "commonjs",
+  "build": {
+    "appId": "com.copypaste.app",
+    "productName": "CopyPaste",
+    "icon": "icon.ico",
+    "npmRebuild": false,
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "icon.ico"
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": false,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "CopyPaste"
+    },
+    "files": [
+      "**/*",
+      "!convert_icon.js",
+      "!error.log",
+      "!*.md"
+    ],
+    "extraResources": [
+      {
+        "from": "icon.png",
+        "to": "icon.png"
+      }
+    ]
+  },
+  "devDependencies": {
+    "electron": "^40.6.1",
+    "electron-builder": "^25.1.8",
+    "png-to-ico": "^3.0.1"
+  },
+  "dependencies": {
+    "@hurdlegroup/robotjs": "^0.12.3"
+  }
+}
