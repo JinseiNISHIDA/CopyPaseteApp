@@ -3,20 +3,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const elHistoryList = document.getElementById('history-list');
     const elTabs = document.querySelectorAll('.tab');
 
-    // タブの切り替え処理
+    // タブの切り替え処理を共通化
+    function switchTab(tabId) {
+        elTabs.forEach(t => t.classList.remove('active'));
+        const elTab = document.querySelector(`.tab[data-tab="${tabId}"]`);
+        if (elTab) elTab.classList.add('active');
+
+        if (tabId === 'history') {
+            renderHistory();
+        } else if (tabId === 'favorites') {
+            renderFavorites();
+        }
+    }
+
     elTabs.forEach(elTab => {
         elTab.addEventListener('click', () => {
-            // 全タブを非アクティブ化
-            elTabs.forEach(t => t.classList.remove('active'));
-            // クリックしたタブをアクティブ化
-            elTab.classList.add('active');
-
-            const currentTab = elTab.dataset.tab;
-            if (currentTab === 'history') {
-                renderHistory();
-            } else if (currentTab === 'favorites') {
-                renderFavorites();
-            }
+            switchTab(elTab.dataset.tab);
         });
     });
 
@@ -34,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // お気に入り切り替え
                 Logic.toggleFavorite(index, isHistoryTab);
             } else {
-                onItemSelected(index, isHistoryTab);
+                onItemSelected(index, isHistoryTab, e.shiftKey);
             }
         }
     });
@@ -60,19 +62,31 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         if (e.key === 'ArrowRight') {
+            if (e.shiftKey) {
+                switchTab('favorites');
+                return;
+            }
             if (selectedIndex < elItems.length - 1) {
                 selectItem(selectedIndex + 1);
             } else if (selectedIndex === -1) {
                 selectItem(0);
             }
         } else if (e.key === 'ArrowLeft') {
+            if (e.shiftKey) {
+                switchTab('history');
+                return;
+            }
             if (selectedIndex > 0) {
                 selectItem(selectedIndex - 1);
             }
+        } else if (e.key === 'Home') {
+            if (elItems.length > 0) selectItem(0);
+        } else if (e.key === 'End') {
+            if (elItems.length > 0) selectItem(elItems.length - 1);
         } else if (e.key === 'Enter') {
             if (selectedIndex !== -1) {
                 const currentTab = document.querySelector('.tab.active').dataset.tab;
-                onItemSelected(selectedIndex, currentTab === 'history');
+                onItemSelected(selectedIndex, currentTab === 'history', e.shiftKey);
             }
         } else if (e.key === 'Escape') {
             window.electronAPI.hideWindow();
@@ -86,16 +100,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // メインプロセスから送られてくるグローバルショートカットを受け取る
     if (window.electronAPI.onNavKey) {
-        window.electronAPI.onNavKey((key) => {
+        window.electronAPI.onNavKey((keyBinding) => {
+            let key = keyBinding;
+            let shiftKey = false;
+
+            if (keyBinding.startsWith('Shift+')) {
+                shiftKey = true;
+                key = keyBinding.substring(6);
+            }
+
             const map = {
                 'Right': 'ArrowRight',
                 'Left': 'ArrowLeft',
                 'Up': 'ArrowUp',
                 'Down': 'ArrowDown',
                 'Enter': 'Enter',
-                'Escape': 'Escape'
+                'Escape': 'Escape',
+                'Home': 'Home',
+                'End': 'End'
             };
-            handleKeyNav({ key: map[key] || key });
+            handleKeyNav({ key: map[key] || key, shiftKey: shiftKey });
         });
     }
 
@@ -118,8 +142,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // 選択されたアイテムをクリップボードに戻してペーストし、ウィンドウを隠す
-    function onItemSelected(index, isHistoryTab) {
-        Logic.pasteItem(index, isHistoryTab);
+    function onItemSelected(index, isHistoryTab, asPlainText = false) {
+        Logic.pasteItem(index, isHistoryTab, asPlainText);
     }
 
     function renderItems(items, isHistoryTab) {

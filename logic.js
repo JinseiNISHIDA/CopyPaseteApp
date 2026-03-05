@@ -123,7 +123,7 @@ const Logic = (() => {
     }
 
     // 選択したアイテムをクリップボードにセットし、ペースト実行
-    function pasteItem(index, isFromHistoryTab) {
+    function pasteItem(index, isFromHistoryTab, asPlainText = false) {
         const items = isFromHistoryTab ? historyItems : favoritesItems;
         if (index < 0 || index >= items.length) return;
         const item = items[index];
@@ -133,8 +133,13 @@ const Logic = (() => {
             window.electronAPI.writeText(item.content);
             lastText = item.content; // 自分自身での変更としてマーク
         } else if (item.type === 'rich-text') {
-            window.electronAPI.writeRichText(item.content);
-            lastText = item.content.text;
+            if (asPlainText) {
+                window.electronAPI.writeText(item.content.text);
+                lastText = item.content.text;
+            } else {
+                window.electronAPI.writeRichText(item.content);
+                lastText = item.content.text;
+            }
         } else if (item.type === 'image') {
             window.electronAPI.writeImage(item.content);
             lastImageHash = item.content;

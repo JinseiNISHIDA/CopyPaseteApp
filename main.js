@@ -41,7 +41,7 @@ function createWindow() {
     });
 }
 
-const NAV_KEYS = ['Up', 'Down', 'Left', 'Right', 'Enter', 'Escape'];
+const NAV_KEYS = ['Up', 'Down', 'Left', 'Right', 'Shift+Left', 'Shift+Right', 'Enter', 'Shift+Enter', 'Escape', 'Home', 'End'];
 
 function registerNavShortcuts() {
     NAV_KEYS.forEach(k => {
@@ -71,8 +71,7 @@ app.whenReady().then(() => {
     createWindow();
 
     // システムトレイの作成
-    const trayIcon = nativeImage.createFromPath(path.join(__dirname, 'icon.png')).resize({ width: 16, height: 16 });
-    tray = new Tray(trayIcon);
+    tray = new Tray(path.join(__dirname, 'icon.ico'));
     const contextMenu = Menu.buildFromTemplate([
         { label: '表示 / 非表示', click: () => toggleWindow() },
         { type: 'separator' },
