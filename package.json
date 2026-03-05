@@ -17,6 +17,10 @@
   "author": "Nishida",
   "license": "ISC",
   "type": "commonjs",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JinseiNISHIDA/CopyPaseteApp.git"
+  },
   "build": {
     "appId": "com.copypaste.app",
     "productName": "CopyPaste",
@@ -25,7 +29,7 @@
     "win": {
       "target": [
         {
-          "target": "portable",
+          "target": "nsis",
           "arch": [
             "x64"
           ]
@@ -41,6 +45,9 @@
       "createStartMenuShortcut": true,
       "shortcutName": "CopyPaste"
     },
+    "publish": [
+      "github"
+    ],
     "files": [
       "**/*",
       "!convert_icon.js",
