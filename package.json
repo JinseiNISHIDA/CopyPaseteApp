@@ -1,6 +1,6 @@
 {
   "name": "copypaste",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Windows用クリップボード履歴マネージャー",
   "main": "main.js",
   "scripts": {
